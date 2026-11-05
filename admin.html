@@ -233,7 +233,7 @@
 <script src="anuncio.js"></script>
 <script>
 const API = window.MIMOS_API;
-const SIZES = ["RN","3M","6M","9M","12M","18M","24M","Única"];
+const SIZES = ["RN","3M","6M","9M","12M","18M","24M","0-6M","6-12M","12-18M","18-24M","Única"];
 let P = [], COST = {}, CATS = [], cur = null, newImg = null;
 let extras = [];
 function drawExtras(){
@@ -319,7 +319,7 @@ function openEdit(p){
   $("eCat").value = p ? (p.categoria||"") : (CATS[0]&&CATS[0].id);
   $("eOn").checked = p ? p.activo : true;
   $("eOrd").value = p ? p.orden : (Math.max(0,...P.map(x=>x.orden||0))+1);
-  const sel = new Set(p ? (p.tallas||[]) : SIZES);
+  const sel = new Set(p ? (p.tallas||[]) : SIZES.slice(0,7));
   $("eSizes").innerHTML = SIZES.map(s=>`<button type="button" class="sz${sel.has(s)?" on":""}" data-s="${s}">${s}</button>`).join("");
   $("eSizes").querySelectorAll(".sz").forEach(b => b.onclick = () => { b.classList.toggle("on"); renderSp(); });
   $("eSp").dataset.vals = JSON.stringify(p ? (p.precios_talla||{}) : {});
