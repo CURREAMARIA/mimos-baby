@@ -41,6 +41,7 @@
   async function rest(path, opts = {}) {
     const t = opts.auth ? await token() : null;
     const headers = { apikey: KEY, "Content-Type": "application/json" };
+    // Con llave publicable (sb_publishable_) solo se manda Authorization cuando hay sesión
     if (t) headers.Authorization = `Bearer ${t}`;
     else if (!KEY.startsWith("sb_")) headers.Authorization = `Bearer ${KEY}`;
     if (opts.prefer) headers.Prefer = opts.prefer;
