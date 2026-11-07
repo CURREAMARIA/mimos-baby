@@ -215,6 +215,21 @@ const grid = document.getElementById("grid");
 const chosen = {};
 const F = {gen:"todo", cat:"todo", marca:"todo"};
 
+
+// Orden "surtido": cada día mezcla los productos y alterna categorías,
+// así no salen siempre primero los mismos.
+function surtido(list){
+  const d = new Date(); let seed = d.getFullYear()*1000 + d.getMonth()*40 + d.getDate();
+  const rnd = () => { seed = (seed*9301 + 49297) % 233280; return seed/233280; };
+  const groups = {};
+  list.forEach(p => { const k = p.categoria || "otros"; (groups[k] = groups[k] || []).push(p); });
+  const keys = Object.keys(groups);
+  keys.forEach(k => { const g = groups[k]; for(let i=g.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [g[i],g[j]]=[g[j],g[i]]; } });
+  for(let i=keys.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [keys[i],keys[j]]=[keys[j],keys[i]]; }
+  const out = []; let left = true;
+  while(left){ left = false; keys.forEach(k => { if(groups[k].length){ out.push(groups[k].shift()); left = true; } }); }
+  return out;
+}
 function render(){
   grid.innerHTML = "";
   const list = PRODUCTS.filter(p =>
@@ -290,7 +305,7 @@ async function load(){
         marcas.map(m => `<button class="chip mini" data-f="${esc(m)}">${esc(m)}</button>`).join("");
       brow.style.display = "";
     }
-    PRODUCTS = prods;
+    PRODUCTS = surtido(prods);
     render();
     loadAjustes();
   }catch(err){
